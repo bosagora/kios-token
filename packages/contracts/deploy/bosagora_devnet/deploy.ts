@@ -2,15 +2,21 @@ import "@nomiclabs/hardhat-ethers";
 import { ethers } from "hardhat";
 
 import { HardhatAccount } from "../../src/HardhatAccount";
+import { BOACoin } from "../../src/utils/Amount";
+import { ContractUtils } from "../../src/utils/ContractUtils";
 import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
 
 import { BaseContract, Contract, Wallet } from "ethers";
 
 import fs from "fs";
-import { ContractUtils } from "../../src/utils/ContractUtils";
-import { BOACoin } from "../../src/utils/Amount";
 
 const network = "bosagora_devnet";
+
+export const MULTI_SIG_WALLET_FACTORY_ADDRESS: { [key: string]: string } = {
+    bosagora_mainnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
+    bosagora_testnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
+    bosagora_devnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
+};
 
 interface IDeployedContract {
     name: string;
@@ -28,6 +34,8 @@ class Deployments {
     public deployments: Map<string, IDeployedContract>;
     public deployers: FnDeployer[];
     public accounts: IAccount;
+    private MULTI_SIG_WALLET_FACTORY_CONTRACT: Contract | undefined;
+
     public ownersOfMultiSigWallet: string[] = [
         "0x2312c098Cef41C0F55350bC3Ad8F4AFf983d9432",
         "0x5AD84fF1bD71cDEa7C3083706F2D1232a453C604",
@@ -47,6 +55,13 @@ class Deployments {
         };
     }
 
+    public async attachPreviousContracts() {
+        const factory = await ethers.getContractFactory("MultiSigWalletFactory");
+        this.MULTI_SIG_WALLET_FACTORY_CONTRACT = factory.attach(
+            MULTI_SIG_WALLET_FACTORY_ADDRESS[network]
+        ) as BaseContract;
+    }
+
     public addContract(name: string, address: string, contract: BaseContract) {
         this.deployments.set(name, {
             name,
@@ -56,6 +71,9 @@ class Deployments {
     }
 
     public getContract(name: string): BaseContract | undefined {
+        if (name === "MultiSigWalletFactory") {
+            return this.MULTI_SIG_WALLET_FACTORY_CONTRACT;
+        }
         const info = this.deployments.get(name);
         if (info !== undefined) {
             return info.contract;
@@ -65,6 +83,9 @@ class Deployments {
     }
 
     public getContractAddress(name: string): string | undefined {
+        if (name === "MultiSigWalletFactory") {
+            return MULTI_SIG_WALLET_FACTORY_ADDRESS[network];
+        }
         const info = this.deployments.get(name);
         if (info !== undefined) {
             return info.address;
@@ -191,7 +212,9 @@ async function deployToken(accounts: IAccount, deployment: Deployments) {
 async function main() {
     const deployments = new Deployments();
 
-    deployments.addDeployer(deployMultiSigWalletFactory);
+    await deployments.attachPreviousContracts();
+
+    // deployments.addDeployer(deployMultiSigWalletFactory);
     deployments.addDeployer(deployMultiSigWallet);
     deployments.addDeployer(deployToken);
 

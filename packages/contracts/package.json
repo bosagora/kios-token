@@ -1,5 +1,5 @@
 {
-    "name": "kios-token",
+    "name": "kios-token-contracts",
     "version": "1.0.0",
     "description": "Smart contracts that the token KIOS",
     "files": [

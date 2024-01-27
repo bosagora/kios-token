@@ -26,10 +26,10 @@ async function deployMultiSigWallet(
     required: number
 ): Promise<MultiSigWallet | undefined> {
     const contractFactory = await ethers.getContractFactory("MultiSigWalletFactory");
-    const factoryContract = contractFactory.attach(factoryAddress);
+    const factoryContract = contractFactory.attach(factoryAddress) as MultiSigWalletFactory;
 
     const address = await ContractUtils.getEventValueString(
-        await factoryContract.connect(deployer).create(owners, required),
+        await factoryContract.connect(deployer).create("", "", owners, required),
         factoryContract.interface,
         "ContractInstantiation",
         "wallet"

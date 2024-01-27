@@ -27,10 +27,10 @@ async function deployMultiSigWallet(
     required: number
 ): Promise<MultiSigWallet | undefined> {
     const contractFactory = await ethers.getContractFactory("MultiSigWalletFactory");
-    const factoryContract = contractFactory.attach(factoryAddress);
+    const factoryContract = contractFactory.attach(factoryAddress) as MultiSigWalletFactory;
 
     const address = await ContractUtils.getEventValueString(
-        await factoryContract.connect(deployer).create(owners, required),
+        await factoryContract.connect(deployer).create("", "", owners, required),
         factoryContract.interface,
         "ContractInstantiation",
         "wallet"
@@ -129,9 +129,9 @@ describe("Test for KIOS token", () => {
         const nonce = await token.nonceOf(account4.address);
         const message = ContractUtils.getTransferMessage(account4.address, account5.address, amount, nonce);
         const signature = ContractUtils.signMessage(account3, message);
-        await expect(
-            token.transferWithSignature(account4.address, account5.address, amount, signature)
-        ).to.be.revertedWith("Invalid signature");
+        await expect(token.delegatedTransfer(account4.address, account5.address, amount, signature)).to.be.revertedWith(
+            "Invalid signature"
+        );
     });
 
     it("Transfer from account4 to account5", async () => {
@@ -139,7 +139,7 @@ describe("Test for KIOS token", () => {
         const nonce = await token.nonceOf(account4.address);
         const message = ContractUtils.getTransferMessage(account4.address, account5.address, amount, nonce);
         const signature = ContractUtils.signMessage(account4, message);
-        await token.transferWithSignature(account4.address, account5.address, amount, signature);
+        await token.delegatedTransfer(account4.address, account5.address, amount, signature);
 
         assert.deepStrictEqual(await token.balanceOf(account5.address), amount);
     });

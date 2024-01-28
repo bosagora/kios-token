@@ -6,14 +6,13 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
 
-import "./IERC20DelegatedTransfer.sol";
+import "./ERC20DelegatedTransfer.sol";
 
-contract KIOS is ERC20, IERC20DelegatedTransfer {
+contract KIOS is ERC20DelegatedTransfer {
     /*
      *  Storage
      */
     address internal owner;
-    mapping(address => uint256) internal nonce;
 
     /*
      *  Modifiers
@@ -26,7 +25,7 @@ contract KIOS is ERC20, IERC20DelegatedTransfer {
     /*
      * Public functions
      */
-    constructor(address account) ERC20("KIOS", "KIOS") {
+    constructor(address account) ERC20DelegatedTransfer("KIOS", "KIOS") {
         owner = account;
         require(
             IMultiSigWallet(owner).supportsInterface(type(IMultiSigWallet).interfaceId),
@@ -41,23 +40,5 @@ contract KIOS is ERC20, IERC20DelegatedTransfer {
 
     function getOwner() external view returns (address) {
         return owner;
-    }
-
-    function nonceOf(address account) external view override returns (uint256) {
-        return nonce[account];
-    }
-
-    function delegatedTransfer(
-        address from,
-        address to,
-        uint256 amount,
-        bytes calldata signature
-    ) external override returns (bool) {
-        bytes32 dataHash = keccak256(abi.encode(from, to, amount, nonce[from]));
-        require(ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), signature) == from, "Invalid signature");
-
-        super._transfer(from, to, amount);
-        nonce[from]++;
-        return true;
     }
 }

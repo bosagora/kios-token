@@ -116,7 +116,9 @@ describe("Test for KIOS token", () => {
         const mintEncoded = token.interface.encodeFunctionData("mint", [account3.address, amount]);
 
         const transactionId = await ContractUtils.getEventValueBigNumber(
-            await multiSigWallet.connect(account0).submitTransaction(token.address, 0, mintEncoded),
+            await multiSigWallet
+                .connect(account0)
+                .submitTransaction("Mint", "Mint 1 token", token.address, 0, mintEncoded),
             multiSigWallet.interface,
             "Submission",
             "transactionId"
@@ -158,7 +160,9 @@ describe("Test for KIOS token", () => {
         const mintEncoded = token.interface.encodeFunctionData("transfer", [account4.address, amount]);
 
         const transactionId = await ContractUtils.getEventValueBigNumber(
-            await multiSigWallet.connect(account0).submitTransaction(token.address, 0, mintEncoded),
+            await multiSigWallet
+                .connect(account0)
+                .submitTransaction("Transfer", "Transfer 1 token", token.address, 0, mintEncoded),
             multiSigWallet.interface,
             "Submission",
             "transactionId"

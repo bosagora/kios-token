@@ -7,9 +7,9 @@ import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
 
 import "./ServiceToken.sol";
 
-contract KIOS is ServiceToken {
+contract PNB is ServiceToken {
     /*
      * Public functions
      */
-    constructor(address account_) ServiceToken("KIOS", "KIOS", account_, 1e10 * 1e18) {}
+    constructor(address account_) ServiceToken("PNB", "PNB", account_, 1e10 * 1e18) {}
 }

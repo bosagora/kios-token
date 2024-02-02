@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IBIP20.sol";
 
-interface IERC20DelegatedTransfer is IERC20 {
+interface IBIP20DelegatedTransfer is IBIP20 {
     function nonceOf(address account) external view returns (uint256);
     function delegatedTransfer(
         address from,

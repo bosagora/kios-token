@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
 
-import "./IERC20DelegatedTransfer.sol";
+import "./BIP20.sol";
+import "./IBIP20DelegatedTransfer.sol";
 
-contract ERC20DelegatedTransfer is ERC20, IERC20DelegatedTransfer {
+contract BIP20DelegatedTransfer is BIP20, IBIP20DelegatedTransfer {
     /*
      *  Storage
      */
@@ -17,7 +17,7 @@ contract ERC20DelegatedTransfer is ERC20, IERC20DelegatedTransfer {
     /*
      * Public functions
      */
-    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) {}
+    constructor(string memory name_, string memory symbol_) BIP20(name_, symbol_) {}
 
     function nonceOf(address account) external view override returns (uint256) {
         return nonce[account];

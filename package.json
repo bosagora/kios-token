@@ -1,8 +1,8 @@
 {
-  "name": "kios-token-contracts",
+  "name": "loyalty-tokens",
   "version": "1.0.0",
-  "description": "A smart contract framework that decentralized point systems",
-  "repository": "https://github.com/bosagora/dms-osx",
+  "description": "Smart contracts for the loyalty tokens",
+  "repository": "https://github.com/bosagora/loyalty-tokens",
   "author": "BOSagora Foundation",
   "license": "AGPL-3.0-or-later",
   "private": true,

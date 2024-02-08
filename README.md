@@ -1,6 +1,6 @@
 # Introduction
 
-This project contains the smart contract source code of the KIOS token and the codes related to the distribution
+This project contains the smart contract source code of the loyalty tokens and the codes related to the distribution
 
 ## Install NodeJS
 
@@ -15,8 +15,8 @@ npm install -g yarn
 ## Install Project
 
 ```shell
-git clone https://github.com/bosagora/kios-token.git
-cd kios-token
+git clone https://github.com/bosagora/loyalty-tokens.git
+cd loyalty-tokens
 yarn install
 ```
 

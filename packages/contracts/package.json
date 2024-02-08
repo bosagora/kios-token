@@ -1,7 +1,7 @@
 {
-    "name": "kios-token-contracts",
+    "name": "loyalty-tokens",
     "version": "1.0.2",
-    "description": "Smart contracts that the token KIOS",
+    "description": "Smart contracts for the loyalty tokens",
     "files": [
         "**/*.sol"
     ],
@@ -19,14 +19,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/bosagora/kios-token.git"
+        "url": "git+https://github.com/bosagora/loyalty-tokens.git"
     },
     "author": "BOSagora Foundation",
     "license": "AGPL-3.0-or-later",
     "bugs": {
-        "url": "https://github.com/bosagora/kios-token/issues"
+        "url": "https://github.com/bosagora/loyalty-tokens/issues"
     },
-    "homepage": "https://github.com/bosagora/kios-token#readme",
+    "homepage": "https://github.com/bosagora/loyalty-tokens#readme",
     "devDependencies": {
         "@ethersproject/constants": "^5.7.0",
         "@nomiclabs/hardhat-ethers": "^2.2.3",

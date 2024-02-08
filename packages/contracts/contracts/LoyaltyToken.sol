@@ -7,7 +7,7 @@ import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
 
 import "./BIP20/BIP20DelegatedTransfer.sol";
 
-contract ServiceToken is BIP20DelegatedTransfer {
+contract LoyaltyToken is BIP20DelegatedTransfer {
     /*
      *  Storage
      */

@@ -2,14 +2,11 @@
 
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
+import "./LoyaltyToken.sol";
 
-import "./ServiceToken.sol";
-
-contract PNB is ServiceToken {
+contract PNB is LoyaltyToken {
     /*
      * Public functions
      */
-    constructor(address account_) ServiceToken("PNB", "PNB", account_, 1e10 * 1e18) {}
+    constructor(address account_) LoyaltyToken("PNB", "PNB", account_, 1e10 * 1e18) {}
 }

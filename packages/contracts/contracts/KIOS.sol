@@ -2,14 +2,11 @@
 
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
+import "./LoyaltyToken.sol";
 
-import "./ServiceToken.sol";
-
-contract KIOS is ServiceToken {
+contract KIOS is LoyaltyToken {
     /*
      * Public functions
      */
-    constructor(address account_) ServiceToken("KIOS", "KIOS", account_, 1e10 * 1e18) {}
+    constructor(address account_) LoyaltyToken("KIOS", "KIOS", account_, 1e10 * 1e18) {}
 }

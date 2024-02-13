@@ -4238,10 +4238,10 @@ ms@2.1.3, ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-multisig-wallet-contracts@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/multisig-wallet-contracts/-/multisig-wallet-contracts-1.0.8.tgz#bdce220b4b5da5bbb5b78a891494a7d71bab951d"
-  integrity sha512-gdMvxrJDV8b2imDie8hILPJi9WYkM+tNdXqtquZvtg3Pfs7+L4YUt+DZ5c9iSd64n1n3xbmK+6jI9uOyvuIwQg==
+multisig-wallet-contracts@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/multisig-wallet-contracts/-/multisig-wallet-contracts-1.1.0.tgz#680b28bdbf9b2860bb853abdbe2b5910b1b0dfee"
+  integrity sha512-dJCxmOBqZZicKjshiC9SS17XPZJWSU/FpZ8eCw1WWTH08jjMudRaKMtJ/l0pjadFRUQ/wDhCUInIixoGhHyCyg==
 
 nanoid@3.3.3:
   version "3.3.3"

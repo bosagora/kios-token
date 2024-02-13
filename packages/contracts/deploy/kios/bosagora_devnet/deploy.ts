@@ -173,7 +173,7 @@ async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments)
     if (address !== undefined) {
         const contract = (await ethers.getContractFactory("MultiSigWallet")).attach(address) as MultiSigWallet;
 
-        const owners = await contract.getOwners();
+        const owners = await contract.getMembers();
         for (let idx = 0; idx < owners.length; idx++) {
             console.log(`MultiSigWallet's owners[${idx}]: ${owners[idx]}`);
         }

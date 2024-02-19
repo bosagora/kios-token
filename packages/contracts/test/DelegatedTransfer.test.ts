@@ -129,7 +129,13 @@ describe("Test for KIOS token", () => {
     it("Transfer from account4 to account5 - Invalid Signature", async () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
-        const message = ContractUtils.getTransferMessage(account4.address, account5.address, amount, nonce);
+        const message = ContractUtils.getTransferMessage(
+            account4.address,
+            account5.address,
+            amount,
+            ethers.provider.network.chainId,
+            nonce
+        );
         const signature = ContractUtils.signMessage(account3, message);
         await expect(token.delegatedTransfer(account4.address, account5.address, amount, signature)).to.be.revertedWith(
             "Invalid signature"
@@ -139,7 +145,13 @@ describe("Test for KIOS token", () => {
     it("Transfer from account4 to account5", async () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
-        const message = ContractUtils.getTransferMessage(account4.address, account5.address, amount, nonce);
+        const message = ContractUtils.getTransferMessage(
+            account4.address,
+            account5.address,
+            amount,
+            ethers.provider.network.chainId,
+            nonce
+        );
         const signature = ContractUtils.signMessage(account4, message);
         await token.delegatedTransfer(account4.address, account5.address, amount, signature);
 

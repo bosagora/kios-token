@@ -90,10 +90,16 @@ export class ContractUtils {
         return undefined;
     }
 
-    public static getTransferMessage(from: string, to: string, amount: BigNumberish, nonce: BigNumberish): Uint8Array {
+    public static getTransferMessage(
+        from: string,
+        to: string,
+        amount: BigNumberish,
+        chainId: BigNumberish,
+        nonce: BigNumberish
+    ): Uint8Array {
         const encodedResult = defaultAbiCoder.encode(
-            ["address", "address", "uint256", "uint256"],
-            [from, to, amount, nonce]
+            ["address", "address", "uint256", "uint256", "uint256"],
+            [from, to, amount, chainId, nonce]
         );
         return arrayify(keccak256(encodedResult));
     }

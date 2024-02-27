@@ -3,7 +3,6 @@
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "multisig-wallet-contracts/contracts/IMultiSigWallet.sol";
 
 import "./BIP20.sol";
 import "./IBIP20DelegatedTransfer.sol";

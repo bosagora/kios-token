@@ -1,10 +1,10 @@
 import "@nomiclabs/hardhat-ethers";
 import { ethers } from "hardhat";
 
-import { HardhatAccount } from "../../../src/HardhatAccount";
-import { BOACoin } from "../../../src/utils/Amount";
-import { ContractUtils } from "../../../src/utils/ContractUtils";
-import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../../../typechain-types";
+import { HardhatAccount } from "../../src/HardhatAccount";
+import { BOACoin } from "../../src/utils/Amount";
+import { ContractUtils } from "../../src/utils/ContractUtils";
+import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
 
 import { BaseContract, Contract, Wallet } from "ethers";
 
@@ -108,7 +108,7 @@ class Deployments {
         }
     }
 
-    static filename = "./deploy/kios/bosagora_devnet/deployed_contracts.json";
+    static filename = "./deploy/side_chain_devnet/deployed_contracts.json";
 
     public async loadContractInfo() {
         if (!fs.existsSync(Deployments.filename)) return;

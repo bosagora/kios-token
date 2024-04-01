@@ -1,10 +1,10 @@
 import "@nomiclabs/hardhat-ethers";
 import { ethers } from "hardhat";
 
-import { HardhatAccount } from "../../../src/HardhatAccount";
-import { BOACoin } from "../../../src/utils/Amount";
-import { ContractUtils } from "../../../src/utils/ContractUtils";
-import { MultiSigWallet, MultiSigWalletFactory, PNB } from "../../../typechain-types";
+import { HardhatAccount } from "../../src/HardhatAccount";
+import { BOACoin } from "../../src/utils/Amount";
+import { ContractUtils } from "../../src/utils/ContractUtils";
+import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
 
 import { BaseContract, Contract, Wallet } from "ethers";
 
@@ -108,7 +108,7 @@ class Deployments {
         }
     }
 
-    static filename = "./deploy/pnb/bosagora_devnet/deployed_contracts.json";
+    static filename = "./deploy/main_chain_devnet/deployed_contracts.json";
 
     public async loadContractInfo() {
         if (!fs.existsSync(Deployments.filename)) return;
@@ -186,17 +186,17 @@ async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments)
 }
 
 async function deployToken(accounts: IAccount, deployment: Deployments) {
-    const contractName = "PNB";
+    const contractName = "KIOS";
     console.log(`Deploy ${contractName}...`);
     if (deployment.getContract("MultiSigWallet") === undefined) {
         console.error("Contract is not deployed!");
         return;
     }
 
-    const factory = await ethers.getContractFactory(contractName);
+    const factory = await ethers.getContractFactory("KIOS");
     const contract = (await factory
         .connect(accounts.deployer)
-        .deploy(deployment.getContractAddress("MultiSigWallet"))) as PNB;
+        .deploy(deployment.getContractAddress("MultiSigWallet"))) as KIOS;
     await contract.deployed();
     await contract.deployTransaction.wait();
 

@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { HardhatAccount } from "../../src/HardhatAccount";
 import { BOACoin } from "../../src/utils/Amount";
 import { ContractUtils } from "../../src/utils/ContractUtils";
-import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
+import { LYT, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
 
 import { BaseContract, Contract, Wallet } from "ethers";
 
@@ -186,24 +186,24 @@ async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments)
 }
 
 async function deployToken(accounts: IAccount, deployment: Deployments) {
-    const contractName = "KIOS";
+    const contractName = "LYT";
     console.log(`Deploy ${contractName}...`);
     if (deployment.getContract("MultiSigWallet") === undefined) {
         console.error("Contract is not deployed!");
         return;
     }
 
-    const factory = await ethers.getContractFactory("KIOS");
+    const factory = await ethers.getContractFactory("LYT");
     const contract = (await factory
         .connect(accounts.deployer)
-        .deploy(deployment.getContractAddress("MultiSigWallet"))) as KIOS;
+        .deploy(deployment.getContractAddress("MultiSigWallet"))) as LYT;
     await contract.deployed();
     await contract.deployTransaction.wait();
 
     const owner = await contract.getOwner();
     const balance = await contract.balanceOf(owner);
-    console.log(`KIOS token's owner: ${owner}`);
-    console.log(`KIOS token's balance of owner: ${new BOACoin(balance).toDisplayString(true, 2)}`);
+    console.log(`LYT token's owner: ${owner}`);
+    console.log(`LYT token's balance of owner: ${new BOACoin(balance).toDisplayString(true, 2)}`);
 
     deployment.addContract(contractName, contract.address, contract);
     console.log(`Deployed ${contractName} to ${contract.address}`);

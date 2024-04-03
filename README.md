@@ -1,6 +1,6 @@
 # Introduction
 
-This project contains the smart contract source code of the loyalty tokens and the codes related to the distribution
+This project contains the smart contract source code of the loyalty coin(LYT)
 
 ## Install NodeJS
 

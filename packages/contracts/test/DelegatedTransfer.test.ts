@@ -3,7 +3,7 @@ import "@nomiclabs/hardhat-waffle";
 import { ethers } from "hardhat";
 
 import { HardhatAccount } from "../src/HardhatAccount";
-import { KIOS, MultiSigWallet, MultiSigWalletFactory } from "../typechain-types";
+import { LYT, MultiSigWallet, MultiSigWalletFactory } from "../typechain-types";
 
 import assert from "assert";
 import { BigNumber, Wallet } from "ethers";
@@ -41,22 +41,22 @@ async function deployMultiSigWallet(
         : undefined;
 }
 
-async function deployToken(deployer: Wallet, owner: string): Promise<KIOS> {
-    const factory = await ethers.getContractFactory("KIOS");
-    const contract = (await factory.connect(deployer).deploy(owner)) as KIOS;
+async function deployToken(deployer: Wallet, owner: string): Promise<LYT> {
+    const factory = await ethers.getContractFactory("LYT");
+    const contract = (await factory.connect(deployer).deploy(owner)) as LYT;
     await contract.deployed();
     await contract.deployTransaction.wait();
     return contract;
 }
 
-describe("Test for KIOS token", () => {
+describe("Test for LYT token", () => {
     const raws = HardhatAccount.keys.map((m) => new Wallet(m, ethers.provider));
     const [deployer, account0, account1, account2, account3, account4, account5] = raws;
     const owners1 = [account0, account1, account2];
 
     let multiSigFactory: MultiSigWalletFactory;
     let multiSigWallet: MultiSigWallet | undefined;
-    let token: KIOS;
+    let token: LYT;
     const requiredConfirmations = 2;
 
     before(async () => {

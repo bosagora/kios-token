@@ -1,6 +1,6 @@
 {
     "name": "loyalty-tokens",
-    "version": "1.0.7",
+    "version": "1.1.0",
     "description": "Smart contracts for the loyalty tokens",
     "files": [
         "**/*.sol"

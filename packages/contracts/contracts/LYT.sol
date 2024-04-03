@@ -4,9 +4,9 @@ pragma solidity ^0.8.2;
 
 import "./LoyaltyToken.sol";
 
-contract KIOS is LoyaltyToken {
+contract LYT is LoyaltyToken {
     /*
      * Public functions
      */
-    constructor(address account_) LoyaltyToken("KIOS", "KIOS", account_, 1e10 * 1e18) {}
+    constructor(address account_) LoyaltyToken("Loyalty Coin", "LYT", account_, 1e10 * 1e18) {}
 }

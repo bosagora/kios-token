@@ -10,6 +10,7 @@ interface IBIP20DelegatedTransfer is IBIP20 {
         address from,
         address to,
         uint256 amount,
+        uint256 expiry,
         bytes calldata signature
     ) external returns (bool);
 }

@@ -96,11 +96,12 @@ export class ContractUtils {
         from: string,
         to: string,
         amount: BigNumberish,
-        nonce: BigNumberish
+        nonce: BigNumberish,
+        expiry: number
     ): Uint8Array {
         const encodedResult = defaultAbiCoder.encode(
-            ["uint256", "address", "address", "address", "uint256", "uint256"],
-            [chainId, tokenAddress, from, to, amount, nonce]
+            ["uint256", "address", "address", "address", "uint256", "uint256", "uint256"],
+            [chainId, tokenAddress, from, to, amount, nonce, expiry]
         );
         return arrayify(keccak256(encodedResult));
     }

@@ -158,33 +158,56 @@ describe("Test for LYT token", () => {
     it("Transfer from account4 to account5 - Invalid Signature", async () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
+        const expiry = ContractUtils.getTimeStamp() + 12 * 5;
         const message = ContractUtils.getTransferMessage(
             ethers.provider.network.chainId,
             token.address,
             account4.address,
             account5.address,
             amount,
-            nonce
+            nonce,
+            expiry
         );
         const signature = ContractUtils.signMessage(account3, message);
-        await expect(token.delegatedTransfer(account4.address, account5.address, amount, signature)).to.be.revertedWith(
-            "Invalid signature"
+        await expect(
+            token.delegatedTransfer(account4.address, account5.address, amount, expiry, signature)
+        ).to.be.revertedWith("Invalid signature");
+    });
+
+    it("Transfer from account4 to account5 - Expired signature", async () => {
+        const amount = BOACoin.make(500).value;
+        const nonce = await token.nonceOf(account4.address);
+        const expiry = ContractUtils.getTimeStamp() - 12;
+        const message = ContractUtils.getTransferMessage(
+            ethers.provider.network.chainId,
+            token.address,
+            account4.address,
+            account5.address,
+            amount,
+            nonce,
+            expiry
         );
+        const signature = ContractUtils.signMessage(account4, message);
+        await expect(
+            token.delegatedTransfer(account4.address, account5.address, amount, expiry, signature)
+        ).to.be.revertedWith("Expired signature");
     });
 
     it("Transfer from account4 to account5", async () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
+        const expiry = ContractUtils.getTimeStamp() + 12 * 5;
         const message = ContractUtils.getTransferMessage(
             ethers.provider.network.chainId,
             token.address,
             account4.address,
             account5.address,
             amount,
-            nonce
+            nonce,
+            expiry
         );
         const signature = ContractUtils.signMessage(account4, message);
-        await token.delegatedTransfer(account4.address, account5.address, amount, signature);
+        await token.delegatedTransfer(account4.address, account5.address, amount, expiry, signature);
 
         assert.deepStrictEqual(await token.balanceOf(account5.address), amount);
     });

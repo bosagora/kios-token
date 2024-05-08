@@ -94,26 +94,21 @@ describe("Test for LYT token", () => {
 
         token = await deployToken(deployer, multiSigWallet.address);
         assert.deepStrictEqual(await token.getOwner(), multiSigWallet.address);
-        assert.deepStrictEqual(
-            await token.balanceOf(multiSigWallet.address),
-            BigNumber.from(10).pow(BigNumber.from(28))
-        );
+        assert.deepStrictEqual(await token.balanceOf(multiSigWallet.address), BigNumber.from(0));
     });
 
-    it("Fail mint", async () => {
+    it("Fail mint initial supply", async () => {
         const amount = BigNumber.from(10).pow(BigNumber.from(18));
-        await expect(token.connect(account0).mint(account3.address, amount)).to.be.revertedWith(
-            "Only the owner can execute"
-        );
+        await expect(token.connect(account0).mint(amount)).to.be.revertedWith("Only the owner can execute");
     });
 
-    it("Success mint", async () => {
+    it("mint initial supply", async () => {
         assert.ok(multiSigWallet);
         assert.ok(token);
 
-        const amount = BigNumber.from(10).pow(BigNumber.from(18));
+        const initialSupply = BigNumber.from(10).pow(BigNumber.from(28));
 
-        const mintEncoded = token.interface.encodeFunctionData("mint", [account3.address, amount]);
+        const mintEncoded = token.interface.encodeFunctionData("mint", [initialSupply]);
 
         const transactionId = await ContractUtils.getEventValueBigNumber(
             await multiSigWallet
@@ -136,7 +131,7 @@ describe("Test for LYT token", () => {
         assert.deepStrictEqual(transactionId, executedTransactionId);
 
         // Check balance of target
-        assert.deepStrictEqual(await token.balanceOf(account3.address), amount);
+        assert.deepStrictEqual(await token.balanceOf(multiSigWallet.address), initialSupply);
     });
 
     it("Fail transfer", async () => {

@@ -88,10 +88,39 @@ describe("Test for LYT token", () => {
 
         token = await deployToken(deployer, multiSigWallet.address);
         assert.deepStrictEqual(await token.getOwner(), multiSigWallet.address);
-        assert.deepStrictEqual(
-            await token.balanceOf(multiSigWallet.address),
-            BigNumber.from(10).pow(BigNumber.from(28))
+        assert.deepStrictEqual(await token.balanceOf(multiSigWallet.address), BigNumber.from(0));
+    });
+
+    it("mint initial supply", async () => {
+        assert.ok(multiSigWallet);
+        assert.ok(token);
+
+        const initialSupply = BigNumber.from(10).pow(BigNumber.from(28));
+
+        const mintEncoded = token.interface.encodeFunctionData("mint", [initialSupply]);
+
+        const transactionId = await ContractUtils.getEventValueBigNumber(
+            await multiSigWallet
+                .connect(account0)
+                .submitTransaction("title", "description", token.address, 0, mintEncoded),
+            multiSigWallet.interface,
+            "Submission",
+            "transactionId"
         );
+        assert.ok(transactionId !== undefined);
+
+        const executedTransactionId = await ContractUtils.getEventValueBigNumber(
+            await multiSigWallet.connect(account1).confirmTransaction(transactionId),
+            multiSigWallet.interface,
+            "Execution",
+            "transactionId"
+        );
+
+        // Check that transaction has been executed
+        assert.deepStrictEqual(transactionId, executedTransactionId);
+
+        // Check balance of target
+        assert.deepStrictEqual(await token.balanceOf(multiSigWallet.address), initialSupply);
     });
 
     it("Transfer to account4", async () => {

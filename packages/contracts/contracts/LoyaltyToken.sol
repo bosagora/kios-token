@@ -24,22 +24,16 @@ contract LoyaltyToken is BIP20DelegatedTransfer {
     /*
      * Public functions
      */
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        address account_,
-        uint256 initialSupply_
-    ) BIP20DelegatedTransfer(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, address account_) BIP20DelegatedTransfer(name_, symbol_) {
         owner = account_;
         require(
             IMultiSigWallet(owner).supportsInterface(type(IMultiSigWallet).interfaceId),
             "Invalid interface ID of multi sig wallet"
         );
-        _mint(owner, initialSupply_);
     }
 
-    function mint(address account, uint256 amount) external onlyOwner {
-        _mint(account, amount);
+    function mint(uint256 amount) external onlyOwner {
+        _mint(owner, amount);
     }
 
     function getOwner() external view returns (address) {

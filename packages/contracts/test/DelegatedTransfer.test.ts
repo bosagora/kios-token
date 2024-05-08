@@ -159,10 +159,11 @@ describe("Test for LYT token", () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
         const message = ContractUtils.getTransferMessage(
+            ethers.provider.network.chainId,
+            token.address,
             account4.address,
             account5.address,
             amount,
-            ethers.provider.network.chainId,
             nonce
         );
         const signature = ContractUtils.signMessage(account3, message);
@@ -175,10 +176,11 @@ describe("Test for LYT token", () => {
         const amount = BOACoin.make(500).value;
         const nonce = await token.nonceOf(account4.address);
         const message = ContractUtils.getTransferMessage(
+            ethers.provider.network.chainId,
+            token.address,
             account4.address,
             account5.address,
             amount,
-            ethers.provider.network.chainId,
             nonce
         );
         const signature = ContractUtils.signMessage(account4, message);

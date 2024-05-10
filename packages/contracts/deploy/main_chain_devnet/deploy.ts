@@ -3,20 +3,11 @@ import { ethers } from "hardhat";
 
 import { HardhatAccount } from "../../src/HardhatAccount";
 import { BOACoin } from "../../src/utils/Amount";
-import { ContractUtils } from "../../src/utils/ContractUtils";
-import { LYT, MultiSigWallet, MultiSigWalletFactory } from "../../typechain-types";
+import { LYT, MultiSigWallet } from "../../typechain-types";
 
-import { BaseContract, Contract, Wallet } from "ethers";
+import { BaseContract, Wallet } from "ethers";
 
 import fs from "fs";
-
-const network = "bosagora_devnet";
-
-export const MULTI_SIG_WALLET_FACTORY_ADDRESS: { [key: string]: string } = {
-    bosagora_mainnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
-    bosagora_testnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
-    bosagora_devnet: "0xF120890C71B2B9fF4578088A398a2402Ae0d3616",
-};
 
 interface IDeployedContract {
     name: string;
@@ -34,7 +25,6 @@ class Deployments {
     public deployments: Map<string, IDeployedContract>;
     public deployers: FnDeployer[];
     public accounts: IAccount;
-    private MULTI_SIG_WALLET_FACTORY_CONTRACT: Contract | undefined;
 
     public ownersOfMultiSigWallet: string[] = [
         "0x2312c098Cef41C0F55350bC3Ad8F4AFf983d9432",
@@ -55,13 +45,6 @@ class Deployments {
         };
     }
 
-    public async attachPreviousContracts() {
-        const factory = await ethers.getContractFactory("MultiSigWalletFactory");
-        this.MULTI_SIG_WALLET_FACTORY_CONTRACT = factory.attach(
-            MULTI_SIG_WALLET_FACTORY_ADDRESS[network]
-        ) as BaseContract;
-    }
-
     public addContract(name: string, address: string, contract: BaseContract) {
         this.deployments.set(name, {
             name,
@@ -71,9 +54,6 @@ class Deployments {
     }
 
     public getContract(name: string): BaseContract | undefined {
-        if (name === "MultiSigWalletFactory") {
-            return this.MULTI_SIG_WALLET_FACTORY_CONTRACT;
-        }
         const info = this.deployments.get(name);
         if (info !== undefined) {
             return info.contract;
@@ -83,9 +63,6 @@ class Deployments {
     }
 
     public getContractAddress(name: string): string | undefined {
-        if (name === "MultiSigWalletFactory") {
-            return MULTI_SIG_WALLET_FACTORY_ADDRESS[network];
-        }
         const info = this.deployments.get(name);
         if (info !== undefined) {
             return info.address;
@@ -139,50 +116,29 @@ class Deployments {
     }
 }
 
-async function deployMultiSigWalletFactory(accounts: IAccount, deployment: Deployments) {
-    const contractName = "MultiSigWalletFactory";
+async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments) {
+    const contractName = "MultiSigWallet";
     console.log(`Deploy ${contractName}...`);
-    const factory = await ethers.getContractFactory("MultiSigWalletFactory");
-    const contract = (await factory.connect(accounts.deployer).deploy()) as MultiSigWalletFactory;
+
+    const factory = await ethers.getContractFactory("MultiSigWallet");
+    const contract = (await factory
+        .connect(accounts.deployer)
+        .deploy(
+            "OwnerWallet",
+            "",
+            deployment.ownersOfMultiSigWallet,
+            deployment.requiredMultiSigWallet
+        )) as MultiSigWallet;
     await contract.deployed();
     await contract.deployTransaction.wait();
 
+    const owners = await contract.getMembers();
+    for (let idx = 0; idx < owners.length; idx++) {
+        console.log(`MultiSigWallet's owners[${idx}]: ${owners[idx]}`);
+    }
+
     deployment.addContract(contractName, contract.address, contract);
     console.log(`Deployed ${contractName} to ${contract.address}`);
-}
-
-async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments): Promise<MultiSigWallet | undefined> {
-    const contractName = "MultiSigWallet";
-    console.log(`Deploy ${contractName}...`);
-    if (deployment.getContract("MultiSigWalletFactory") === undefined) {
-        console.error("Contract is not deployed!");
-        return;
-    }
-
-    const factoryContract = deployment.getContract("MultiSigWalletFactory") as MultiSigWalletFactory;
-
-    const address = await ContractUtils.getEventValueString(
-        await factoryContract
-            .connect(accounts.deployer)
-            .create("OwnerWallet", "", deployment.ownersOfMultiSigWallet, deployment.requiredMultiSigWallet),
-        factoryContract.interface,
-        "ContractInstantiation",
-        "wallet"
-    );
-
-    if (address !== undefined) {
-        const contract = (await ethers.getContractFactory("MultiSigWallet")).attach(address) as MultiSigWallet;
-
-        const owners = await contract.getMembers();
-        for (let idx = 0; idx < owners.length; idx++) {
-            console.log(`MultiSigWallet's owners[${idx}]: ${owners[idx]}`);
-        }
-
-        deployment.addContract(contractName, contract.address, contract);
-        console.log(`Deployed ${contractName} to ${contract.address}`);
-    } else {
-        console.error(`Failed to deploy ${contractName}`);
-    }
 }
 
 async function deployToken(accounts: IAccount, deployment: Deployments) {
@@ -212,9 +168,6 @@ async function deployToken(accounts: IAccount, deployment: Deployments) {
 async function main() {
     const deployments = new Deployments();
 
-    await deployments.attachPreviousContracts();
-
-    // deployments.addDeployer(deployMultiSigWalletFactory);
     deployments.addDeployer(deployMultiSigWallet);
     deployments.addDeployer(deployToken);
 

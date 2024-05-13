@@ -1,6 +1,6 @@
 {
     "name": "loyalty-tokens",
-    "version": "1.1.0",
+    "version": "1.1.3",
     "description": "Smart contracts for the loyalty tokens",
     "files": [
         "**/*.sol"
@@ -48,7 +48,7 @@
         "hardhat": "^2.12.7",
         "hardhat-gas-reporter": "^1.0.7",
         "mocha": "10.1.0",
-        "multisig-wallet-contracts": "^1.1.1",
+        "multisig-wallet-contracts": "^1.1.5",
         "prettier": "^2.5.1",
         "prettier-plugin-solidity": "^1.1.1",
         "solhint": "^3.3.6",

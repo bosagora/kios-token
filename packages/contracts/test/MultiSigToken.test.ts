@@ -35,10 +35,9 @@ async function deployMultiSigWallet(
         "wallet"
     );
 
-    if (address !== undefined) {
-        await factoryContract.register(address);
-        return (await ethers.getContractFactory("MultiSigWallet")).attach(address) as MultiSigWallet;
-    } else return undefined;
+    return address !== undefined
+        ? ((await ethers.getContractFactory("MultiSigWallet")).attach(address) as MultiSigWallet)
+        : undefined;
 }
 
 async function deployToken(deployer: Wallet, owner: string): Promise<LYT> {

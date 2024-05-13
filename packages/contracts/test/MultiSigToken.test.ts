@@ -3,7 +3,7 @@ import "@nomiclabs/hardhat-waffle";
 import { ethers } from "hardhat";
 
 import { HardhatAccount } from "../src/HardhatAccount";
-import { LYT, MultiSigWallet } from "../typechain-types";
+import { LYT, MultiSigWallet, MultiSigWalletFactory } from "../typechain-types";
 
 import assert from "assert";
 import { BigNumber, Wallet } from "ethers";
@@ -11,16 +11,34 @@ import { ContractUtils } from "../src/utils/ContractUtils";
 
 import { expect } from "chai";
 
+async function deployMultiSigWalletFactory(deployer: Wallet): Promise<MultiSigWalletFactory> {
+    const factory = await ethers.getContractFactory("MultiSigWalletFactory");
+    const contract = (await factory.connect(deployer).deploy()) as MultiSigWalletFactory;
+    await contract.deployed();
+    await contract.deployTransaction.wait();
+    return contract;
+}
+
 async function deployMultiSigWallet(
+    factoryAddress: string,
     deployer: Wallet,
     owners: string[],
     required: number
 ): Promise<MultiSigWallet | undefined> {
-    const factory = await ethers.getContractFactory("MultiSigWallet");
-    const contract = (await factory.connect(deployer).deploy("", "", owners, required)) as MultiSigWallet;
-    await contract.deployed();
-    await contract.deployTransaction.wait();
-    return contract;
+    const contractFactory = await ethers.getContractFactory("MultiSigWalletFactory");
+    const factoryContract = contractFactory.attach(factoryAddress) as MultiSigWalletFactory;
+
+    const address = await ContractUtils.getEventValueString(
+        await factoryContract.connect(deployer).create("", "", owners, required),
+        factoryContract.interface,
+        "ContractInstantiation",
+        "wallet"
+    );
+
+    if (address !== undefined) {
+        await factoryContract.register(address);
+        return (await ethers.getContractFactory("MultiSigWallet")).attach(address) as MultiSigWallet;
+    } else return undefined;
 }
 
 async function deployToken(deployer: Wallet, owner: string): Promise<LYT> {
@@ -36,12 +54,19 @@ describe("Test for LYT token", () => {
     const [deployer, account0, account1, account2, account3, account4] = raws;
     const owners1 = [account0, account1, account2];
 
+    let multiSigFactory: MultiSigWalletFactory;
     let multiSigWallet: MultiSigWallet | undefined;
     let token: LYT;
     const requiredConfirmations = 2;
 
+    before(async () => {
+        multiSigFactory = await deployMultiSigWalletFactory(deployer);
+        assert.ok(multiSigFactory);
+    });
+
     it("Create Wallet by Factory", async () => {
         multiSigWallet = await deployMultiSigWallet(
+            multiSigFactory.address,
             deployer,
             owners1.map((m) => m.address),
             requiredConfirmations
@@ -52,6 +77,10 @@ describe("Test for LYT token", () => {
             await multiSigWallet.getMembers(),
             owners1.map((m) => m.address)
         );
+
+        assert.deepStrictEqual(await multiSigFactory.getNumberOfWalletsForMember(account0.address), BigNumber.from(1));
+        assert.deepStrictEqual(await multiSigFactory.getNumberOfWalletsForMember(account1.address), BigNumber.from(1));
+        assert.deepStrictEqual(await multiSigFactory.getNumberOfWalletsForMember(account2.address), BigNumber.from(1));
     });
 
     it("Create Token, Owner is wallet", async () => {

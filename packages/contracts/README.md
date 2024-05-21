@@ -1,6 +1,11 @@
 # Introduction
 
-This project contains the smart contract source code of the loyalty coin(LYT)
+This project contains the smart contract source code of the loyalty token(LYT)
+
+## WhitePaper
+
+-   [English](docs%2FLYT_TokenWhitePaper_EN.pdf)
+-   [Korean](docs%2FLYT_TokenWhitePaper_KO.pdf)
 
 ## Install NodeJS
 

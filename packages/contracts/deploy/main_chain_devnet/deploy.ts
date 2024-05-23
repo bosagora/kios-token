@@ -164,7 +164,7 @@ async function deployMultiSigWallet(accounts: IAccount, deployment: Deployments)
     const address = await ContractUtils.getEventValueString(
         await factoryContract
             .connect(accounts.deployer)
-            .create("OwnerWallet", "", deployment.ownersOfMultiSigWallet, deployment.requiredMultiSigWallet),
+            .create("OwnerWallet", "", deployment.ownersOfMultiSigWallet, deployment.requiredMultiSigWallet, 1),
         factoryContract.interface,
         "ContractInstantiation",
         "wallet"

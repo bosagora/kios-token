@@ -23,13 +23,14 @@ async function deployMultiSigWallet(
     factoryAddress: string,
     deployer: Wallet,
     owners: string[],
-    required: number
+    required: number,
+    seed: BigNumber
 ): Promise<MultiSigWallet | undefined> {
     const contractFactory = await ethers.getContractFactory("MultiSigWalletFactory");
     const factoryContract = contractFactory.attach(factoryAddress) as MultiSigWalletFactory;
 
     const address = await ContractUtils.getEventValueString(
-        await factoryContract.connect(deployer).create("", "", owners, required),
+        await factoryContract.connect(deployer).create("", "", owners, required, seed),
         factoryContract.interface,
         "ContractInstantiation",
         "wallet"
@@ -68,7 +69,8 @@ describe("Test for LYT token", () => {
             multiSigFactory.address,
             deployer,
             owners1.map((m) => m.address),
-            requiredConfirmations
+            requiredConfirmations,
+            BigNumber.from(1)
         );
         assert.ok(multiSigWallet);
 

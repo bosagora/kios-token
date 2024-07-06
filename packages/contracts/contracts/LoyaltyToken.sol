@@ -11,32 +11,23 @@ contract LoyaltyToken is BIP20DelegatedTransfer {
     /*
      *  Storage
      */
-    address internal owner;
-
-    /*
-     *  Modifiers
-     */
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can execute");
-        _;
-    }
 
     /*
      * Public functions
      */
-    constructor(string memory name_, string memory symbol_, address account_) BIP20DelegatedTransfer(name_, symbol_) {
-        owner = account_;
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        address account_,
+        address feeAccount_
+    ) BIP20DelegatedTransfer(name_, symbol_, account_, feeAccount_) {
         require(
             IMultiSigWallet(owner).supportsInterface(type(IMultiSigWallet).interfaceId),
-            "Invalid interface ID of multi sig wallet"
+            "LoyaltyToken: Invalid interface ID of multi sig wallet"
         );
     }
 
     function mint(uint256 amount) external onlyOwner {
         _mint(owner, amount);
-    }
-
-    function getOwner() external view returns (address) {
-        return owner;
     }
 }

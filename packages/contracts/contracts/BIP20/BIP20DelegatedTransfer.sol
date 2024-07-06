@@ -30,8 +30,11 @@ contract BIP20DelegatedTransfer is BIP20, IBIP20DelegatedTransfer {
         bytes calldata signature
     ) external override returns (bool) {
         bytes32 dataHash = keccak256(abi.encode(block.chainid, address(this), from, to, amount, nonce[from], expiry));
-        require(ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), signature) == from, "Invalid signature");
-        require(expiry > block.timestamp, "Expired signature");
+        require(
+            ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), signature) == from,
+            "BIP20DelegatedTransfer: Invalid signature"
+        );
+        require(expiry > block.timestamp, "BIP20DelegatedTransfer: Expired signature");
 
         super._transfer(from, to, amount);
         nonce[from]++;

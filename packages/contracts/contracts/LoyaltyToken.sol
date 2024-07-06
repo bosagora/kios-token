@@ -13,6 +13,12 @@ contract LoyaltyToken is BIP20DelegatedTransfer {
      */
     address internal owner;
 
+    address public protocolFeeAccount;
+
+    uint256 internal protocolFee;
+
+    uint256 public constant MAX_PROTOCOL_FEE = 5e18;
+
     /*
      *  Modifiers
      */
@@ -24,11 +30,18 @@ contract LoyaltyToken is BIP20DelegatedTransfer {
     /*
      * Public functions
      */
-    constructor(string memory name_, string memory symbol_, address account_) BIP20DelegatedTransfer(name_, symbol_) {
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        address account_,
+        address feeAccount_
+    ) BIP20DelegatedTransfer(name_, symbol_) {
         owner = account_;
+        protocolFeeAccount = feeAccount_;
+        protocolFee = 1e17;
         require(
             IMultiSigWallet(owner).supportsInterface(type(IMultiSigWallet).interfaceId),
-            "Invalid interface ID of multi sig wallet"
+            "LoyaltyToken: Invalid interface ID of multi sig wallet"
         );
     }
 
@@ -38,5 +51,43 @@ contract LoyaltyToken is BIP20DelegatedTransfer {
 
     function getOwner() external view returns (address) {
         return owner;
+    }
+
+    function getProtocolFee() external view returns (uint256) {
+        return protocolFee;
+    }
+
+    function changeProtocolFee(uint256 _protocolFee) external {
+        require(msg.sender == owner, "LoyaltyToken: Sender is not authorized to execute.");
+        require(_protocolFee <= MAX_PROTOCOL_FEE, "LoyaltyToken: The value entered is not an appropriate value.");
+        protocolFee = _protocolFee;
+    }
+
+    function changeProtocolFeeAccount(address _account) external {
+        require(msg.sender == protocolFeeAccount, "LoyaltyToken: Sender is not authorized to execute.");
+
+        protocolFeeAccount = _account;
+    }
+
+    function delegatedTransferWithFee(
+        address from,
+        address to,
+        uint256 amount,
+        uint256 expiry,
+        bytes calldata signature
+    ) external returns (bool) {
+        bytes32 dataHash = keccak256(abi.encode(block.chainid, address(this), from, to, amount, nonce[from], expiry));
+        require(
+            ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), signature) == from,
+            "LoyaltyToken: Invalid signature"
+        );
+        require(expiry > block.timestamp, "LoyaltyToken: Expired signature");
+
+        require(amount > protocolFee, "LoyaltyToken: The amount should be greater than the fee.");
+        require(balanceOf(from) >= amount, "LoyaltyToken: transfer amount exceeds balance");
+        super._transfer(from, to, amount - protocolFee);
+        super._transfer(from, protocolFeeAccount, protocolFee);
+        nonce[from]++;
+        return true;
     }
 }

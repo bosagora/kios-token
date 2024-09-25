@@ -8,5 +8,9 @@ contract LYT is LoyaltyToken {
     /*
      * Public functions
      */
-    constructor(address account_, address feeAccount_) LoyaltyToken("Loyalty Coin", "LYT", account_, feeAccount_) {}
+    constructor(
+        address account_,
+        address feeAccount_,
+        uint256 maxSupply_
+    ) LoyaltyToken("Loyalty Coin", "LYT", account_, feeAccount_, maxSupply_) {}
 }

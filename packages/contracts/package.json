@@ -1,6 +1,6 @@
 {
     "name": "loyalty-tokens",
-    "version": "2.1.1",
+    "version": "2.3.0",
     "description": "Smart contracts for the loyalty tokens",
     "files": [
         "**/*.sol"
@@ -16,7 +16,8 @@
         "formatting:check": "prettier '**/*.{json,sol,ts,js,md}' -c",
         "formatting:write": "prettier '**/*.{json,sol,ts,js,md}' --write",
         "test:DelegatedTransfer": "hardhat test test/DelegatedTransfer.test.ts",
-        "test:MultiSigToken": "hardhat test test/MultiSigToken.test.ts"
+        "test:MultiSigToken": "hardhat test test/MultiSigToken.test.ts",
+        "test:MaxSupply": "hardhat test test/MaxSupply.test.ts"
     },
     "repository": {
         "type": "git",

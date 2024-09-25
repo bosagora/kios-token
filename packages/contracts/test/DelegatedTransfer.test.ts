@@ -42,9 +42,9 @@ async function deployMultiSigWallet(
         : undefined;
 }
 
-async function deployToken(deployer: Wallet, owner: string, feeAccount: string): Promise<LYT> {
+async function deployToken(deployer: Wallet, owner: string, feeAccount: string, maxSupply: BigNumber): Promise<LYT> {
     const factory = await ethers.getContractFactory("LYT");
-    const contract = (await factory.connect(deployer).deploy(owner, feeAccount)) as LYT;
+    const contract = (await factory.connect(deployer).deploy(owner, feeAccount, maxSupply)) as LYT;
     await contract.deployed();
     await contract.deployTransaction.wait();
     return contract;
@@ -88,7 +88,7 @@ describe("Test for LYT token", () => {
     it("Create Token, Owner is MultiSigWallet", async () => {
         assert.ok(multiSigWallet);
 
-        token = await deployToken(deployer, multiSigWallet.address, feeAccount.address);
+        token = await deployToken(deployer, multiSigWallet.address, feeAccount.address, BigNumber.from(0));
         assert.deepStrictEqual(await token.getOwner(), multiSigWallet.address);
         assert.deepStrictEqual(await token.balanceOf(multiSigWallet.address), BigNumber.from(0));
     });
